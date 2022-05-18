@@ -1,0 +1,309 @@
+Solana How to...
+
+PATH="/home/dan/.local/share/solana/install/active_release/bin:$PATH"
+
+bash: /home/dan/anaconda3/bin:/home/dan/.local/bin:/home/dan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin: No such file or directory
+
+Wrote new keypair to /home/dan/my-solana-wallet/my-keypair.json
+===========================================================================
+pubkey: CB1mZWz3AztAfbzX3ufix6XFeXcrZ2GTFHcjyPTpVV5k
+===========================================================================
+Save this seed phrase and your BIP39 passphrase to recover your new keypair:
+grief inspire hire palm bridge nice siren object enroll simple exact volume
+===========================================================================
+
+To check if pulic key is valid:
+solana-keygen verify CB1mZWz3AztAfbzX3ufix6XFeXcrZ2GTFHcjyPTpVV5k ~/my-solana-wallet/my-keypair.json
+
+Find out cluster you are connected to: devnet,testnet, mainnet
+dan@dan-desktop:~$ solana config get
+Config File: /home/dan/.config/solana/cli/config.yml
+RPC URL: https://api.mainnet-beta.solana.com 
+WebSocket URL: wss://api.mainnet-beta.solana.com/ (computed)
+Keypair Path: /home/dan/.config/solana/id.json 
+Commitment: confirmed 
+
+# Check the address's balance
+solana balance CB1mZWz3AztAfbzX3ufix6XFeXcrZ2GTFHcjyPTpVV5k --url https://api.mainnet-beta.solana.com #this is my Solana wallet account
+
+solana balance Ajc1QMsFALQKTKYcx3YU43BwcazgghLHzibZMxPURRMx --url https://api.mainnet-beta.solana.com #this is Binance Staking Account
+
+To receive sol from someone, they use your public key: CB1mZWz3AztAfbzX3ufix6XFeXcrZ2GTFHcjyPTpVV5k
+
+To send to someone:
+solana transfer --from <KEYPAIR> <RECIPIENT_ACCOUNT_ADDRESS> 0.5 --allow-unfunded-recipient --url https://api.devnet.solana.com --fee-payer <KEYPAIR>
+
+solana transfer --from ~/my-solana-wallet/my-keypair.json BcHJmKonVD1DEDA3Qj4vaZF2HrD4rmgVHRqEaAEDNiun 0.3 --fee-payer ~/my-solana-wallet/my-keypair.json --allow-unfunded-recipient
+solana transfer --from ~/my-solana-wallet/my-keypair.json ERG22dhWpbsEpqciaZEiYoD9LDwrvGatFDhHP1sRiZ6A 21 --fee-payer ~/my-solana-wallet/my-keypair.json --allow-unfunded-recipient     #valr sol account
+
+Transfer fees were .01 SOL..42 seconds from Binance to home, and 24 seconds from home to Binance.
+
+======================================
+STAKING
+The Binance node is 9th largest. 47e2BfrzbWdDieFZA7fc9fX1f73WTtkok2fQxSb8GueY
+StakeEconomy is   . With 230,000 staked coins
+
+Create a cli stake wallet
+
+## 1. ## This makes the stake-account address:
+solana-keygen new --no-passphrase -o ~/my-solana-wallet/stake-account3.json
+pubkey: FR2T3SbTwDvn1xYBTqRkExZhDm1VvQXAGSTRCJVYqqKw
+
+List of stake accounts:
+acc1=FR2T3SbTwDvn1xYBTqRkExZhDm1VvQXAGSTRCJVYqqKw  ##12 sol Stakeconomy
+acc4=4SPiMAm4WjvetWzHA3GYxEcAVBp6ysJz2mUnq8kZVBgJ  ##120 sol Stakeconomy
+acc2=Ajc1QMsFALQKTKYcx3YU43BwcazgghLHzibZMxPURRMx  ##7 sol Binance  not used anymore
+acc3=AGtdK9z1aD7xjVvXKFVPt8LceLgZW6ZiaSvxkUdfzAk9  ##50 sol Stakeeconomy  Note-Closed Sep 21 2021
+acc4=EcpWGSfVKEFXkpL4uMciCScuKcvd8saxxtH7ffMczhup  ##27 sol Stakeeconomy  N0TE-Closed Sep 20 20121
+acc5=7AStZGzqTSqS9teBkRujE6udALQNaWy9TD9PUaj1R4Z4  ##66 sol Stakeconomy
+
+##2## This creats the stake accout. you need the json of this stake account into ~~/my-solana-wallet/stake-account3.json 50.0  followed by the ammount to take out of the main SOL wallet.
+
+dan@dan-desktop:~$ solana create-stake-account --from ~/my-solana-wallet/my-keypair.json ~/my-solana-wallet/stake-account3.json 50.0 --stake-authority ~/my-solana-wallet/my-keypair.json --withdraw-authority ~/my-solana-wallet/my-keypair.json --fee-payer ~/my-solana-wallet/my-keypair.json
+    
+ it replies with :
+ Signature: 2c5ZSJskVXtote7PFsNt9rhfXsByMCd7D9YMm2awmWvuVyUAFCj8kMMBeFSvye7ASsCp1wBzS6dU96RMcA7yJSbj
+ acc4= Signature: 2BnhpCGNCEtHYovtNDAdotKayu5BVGjaS1w2aNcFbj2FDze6exu2Ja187Qmep6tUabPXPNm5bv4pQ6MExrXamwJk
+
+ 
+ ##3## This checks that the created stake account got the SOL from the mail wallet.
+dan@dan-desktop:~$  solana stake-account FR2T3SbTwDvn1xYBTqRkExZhDm1VvQXAGSTRCJVYqqKw
+
+##4## Now you have a Stake account. Next deligate a validater to vote for you.
+
+I will use Stakeconomy:
+Vote Addr: GNZ1PAAS33davY4Q1BMEpZEpVBtRtGvSpcTH5wYVkkVt
+           GNZ1PAAS33davY4Q1BMEpZEpVBtRtGvSpcTH5wYVkkVt
+
+dan@dan-desktop:~$ solana delegate-stake --stake-authority ~/my-solana-wallet/my-keypair.json AGtdK9z1aD7xjVvXKFVPt8LceLgZW6ZiaSvxkUdfzAk9 GNZ1PAAS33davY4Q1BMEpZEpVBtRtGvSpcTH5wYVkkVt --fee-payer ~/my-solana-wallet/my-keypair.json
+
+Now check stake account again:
+
+dan@dan-desktop:~$ solana stake-account FR2T3SbTwDvn1xYBTqRkExZhDm1VvQXAGSTRCJVYqqKw
+Balance: 12 SOL
+Rent Exempt Reserve: 0.00228288 SOL
+Delegated Stake: 11.99771712 SOL
+Active Stake: 0 SOL
+Activating Stake: 11.99771712 SOL
+Stake activates starting from epoch: 192
+Delegated Vote Account Address: GNZ1PAAS33davY4Q1BMEpZEpVBtRtGvSpcTH5wYVkkVt
+Stake Authority: CB1mZWz3AztAfbzX3ufix6XFeXcrZ2GTFHcjyPTpVV5k
+Withdraw Authority: CB1mZWz3AztAfbzX3ufix6XFeXcrZ2GTFHcjyPTpVV5k
+
+=======================
+New Stake account:
+
+dan@dan-desktop:~$ solana-keygen new --no-passphrase -o ~/my-solana-wallet/stake-account2.json
+Generating a new keypair
+Wrote new keypair to /home/dan/my-solana-wallet/stake-account2.json
+=============================================================
+pubkey: 4SPiMAm4WjvetWzHA3GYxEcAVBp6ysJz2mUnq8kZVBgJ
+=============================================================
+Save this seed phrase to recover your new keypair:
+job pull agree verb man tank quick bone local fatal swift aim
+=============================================================
+
+
+=============================================================
+make another stake account:
+
+dan@dan-desktop:~$  solana create-stake-account --from ~/my-solana-wallet/my-keypair.json ~/my-solana-wallet/stake-account2.json 120.0 --stake-authority ~/my-solana-wallet/my-keypair.json --withdraw-authority ~/my-solana-wallet/my-keypair.json --fee-payer ~/my-solana-wallet/my-keypair.json
+
+Signature: RqwMs1W2DztjhS6L51vUyUtS5BmB6y4J9Ddfb7oz338nTZwD1QZHKGSaWvGkA9LAwm3LV1J1qBfdjGodvRzHP8E
+
+Delegate stake:
+solana delegate-stake --stake-authority ~/my-solana-wallet/my-keypair.json 4SPiMAm4WjvetWzHA3GYxEcAVBp6ysJz2mUnq8kZVBgJ GNZ1PAAS33davY4Q1BMEpZEpVBtRtGvSpcTH5wYVkkVt --fee-payer ~/my-solana-wallet/my-keypair.json
+
+check the stake account:
+dan@dan-desktop:~$ solana stake-account 4SPiMAm4WjvetWzHA3GYxEcAVBp6ysJz2mUnq8kZVBgJ
+Balance: 120 SOL
+Rent Exempt Reserve: 0.00228288 SOL
+Delegated Stake: 119.99771712 SOL
+Active Stake: 0 SOL
+Activating Stake: 119.99771712 SOL
+Stake activates starting from epoch: 192
+Delegated Vote Account Address: GNZ1PAAS33davY4Q1BMEpZEpVBtRtGvSpcTH5wYVkkVt
+Stake Authority: CB1mZWz3AztAfbzX3ufix6XFeXcrZ2GTFHcjyPTpVV5k
+Withdraw Authority: CB1mZWz3AztAfbzX3ufix6XFeXcrZ2GTFHcjyPTpVV5k
+
+===================
+
+dan@dan-desktop:~/my-solana-wallet$ solana stake-account EcpWGSfVKEFXkpL4uMciCScuKcvd8saxxtH7ffMczhup
+Balance: 27 SOL
+Rent Exempt Reserve: 0.00228288 SOL
+Delegated Stake: 26.99771712 SOL
+Active Stake: 0 SOL
+Activating Stake: 26.99771712 SOL
+Stake activates starting from epoch: 216
+Delegated Vote Account Address: GNZ1PAAS33davY4Q1BMEpZEpVBtRtGvSpcTH5wYVkkVt
+Stake Authority: CB1mZWz3AztAfbzX3ufix6XFeXcrZ2GTFHcjyPTpVV5k
+Withdraw Authority: CB1mZWz3AztAfbzX3ufix6XFeXcrZ2GTFHcjyPTpVV5k
+=====
+DOES NOT WORK!!!
+Error: RPC response error -32002: Transaction simulation failed: Error processing Instruction 0: custom program error: 0x6 [6 log messages]
+
+Now you have 2 stake accounts, both deligated to stakeconomy
+Trying to merge the accounts into one...
+solana merge-stake --keypair ~/my-solana-wallet/my-keypair.json --fee-payer ~/my-solana-wallet/my-keypair.json --stake-authority ~/my-solana-wallet/my-keypair.json FR2T3SbTwDvn1xYBTqRkExZhDm1VvQXAGSTRCJVYqqKw 4SPiMAm4WjvetWzHA3GYxEcAVBp6ysJz2mUnq8kZVBgJ
+
+==========================Saved Aug 28 2021
+dan@dan-desktop:~/my-solana-wallet$ solana stake-account AGtdK9z1aD7xjVvXKFVPt8LceLgZW6ZiaSvxkUdfzAk9
+Balance: 50.470419476 SOL
+Rent Exempt Reserve: 0.00228288 SOL
+Delegated Stake: 50.468136596 SOL
+Active Stake: 50.468136596 SOL
+Delegated Vote Account Address: GNZ1PAAS33davY4Q1BMEpZEpVBtRtGvSpcTH5wYVkkVt
+Stake Authority: CB1mZWz3AztAfbzX3ufix6XFeXcrZ2GTFHcjyPTpVV5k
+Withdraw Authority: CB1mZWz3AztAfbzX3ufix6XFeXcrZ2GTFHcjyPTpVV5k
+
+dan@dan-desktop:~/my-solana-wallet$ solana stake-account FR2T3SbTwDvn1xYBTqRkExZhDm1VvQXAGSTRCJVYqqKw
+Balance: 12.148487111 SOL
+Rent Exempt Reserve: 0.00228288 SOL
+Delegated Stake: 12.146204231 SOL
+Active Stake: 12.146204231 SOL
+Delegated Vote Account Address: GNZ1PAAS33davY4Q1BMEpZEpVBtRtGvSpcTH5wYVkkVt
+Stake Authority: CB1mZWz3AztAfbzX3ufix6XFeXcrZ2GTFHcjyPTpVV5k
+Withdraw Authority: CB1mZWz3AztAfbzX3ufix6XFeXcrZ2GTFHcjyPTpVV5k
+
+dan@dan-desktop:~/my-solana-wallet$ solana stake-account 4SPiMAm4WjvetWzHA3GYxEcAVBp6ysJz2mUnq8kZVBgJ
+Balance: 121.485125587 SOL
+Rent Exempt Reserve: 0.00228288 SOL
+Delegated Stake: 121.482842707 SOL
+Active Stake: 121.482842707 SOL
+Delegated Vote Account Address: GNZ1PAAS33davY4Q1BMEpZEpVBtRtGvSpcTH5wYVkkVt
+Stake Authority: CB1mZWz3AztAfbzX3ufix6XFeXcrZ2GTFHcjyPTpVV5k
+Withdraw Authority: CB1mZWz3AztAfbzX3ufix6XFeXcrZ2GTFHcjyPTpVV5k
+
+dan@dan-desktop:~/my-solana-wallet$ solana stake-account EcpWGSfVKEFXkpL4uMciCScuKcvd8saxxtH7ffMczhup
+Balance: 27 SOL
+Rent Exempt Reserve: 0.00228288 SOL
+Delegated Stake: 26.99771712 SOL
+Active Stake: 0 SOL
+Activating Stake: 26.99771712 SOL
+Stake activates starting from epoch: 216
+Delegated Vote Account Address: GNZ1PAAS33davY4Q1BMEpZEpVBtRtGvSpcTH5wYVkkVt
+Stake Authority: CB1mZWz3AztAfbzX3ufix6XFeXcrZ2GTFHcjyPTpVV5k
+Withdraw Authority: CB1mZWz3AztAfbzX3ufix6XFeXcrZ2GTFHcjyPTpVV5k
+
+==============================================
+Deactivate Stake#
+Once delegated, you can undelegate stake with the solana deactivate-stake command:
+
+solana deactivate-stake --stake-authority <KEYPAIR> <STAKE_ACCOUNT_ADDRESS> \
+    --fee-payer <KEYPAIR>
+The stake authority <KEYPAIR> authorizes the operation on the account with address <STAKE_ACCOUNT_ADDRESS>.
+
+Note that stake takes several epochs to "cool down". Attempts to delegate stake in the cool down period will fail.
+
+solana deactivate-stake --stake-authority <KEYPAIR> <STAKE_ACCOUNT_ADDRESS> \
+    --fee-payer <KEYPAIR>
+dan@dan-desktop:~$  solana create-stake-account --from ~/my-solana-wallet/my-keypair.json ~/my-solana-wallet/stake-account2.json 120.0 --stake-authority ~/my-solana-wallet/my-keypair.json --withdraw-authority ~/my-solana-wallet/my-keypair.json --fee-payer ~/my-solana-wallet/my-keypair.json
+
+solana deactivate-stake --stake-authority ~/my-solana-wallet/my-keypair.json EcpWGSfVKEFXkpL4uMciCScuKcvd8saxxtH7ffMczhup --fee-payer ~/my-solana-wallet/my-keypair.json
+
+dan@dan-desktop:~$ solana deactivate-stake --stake-authority ~/my-solana-wallet/my-keypair.json EcpWGSfVKEFXkpL4uMciCScuKcvd8saxxtH7ffMczhup --fee-payer ~/my-solana-wallet/my-keypair.json
+
+Signature: 3usxehGJhWMpWuenQRE6NoboBrZNN6aa7djpFc7hPbj4M2EvqvVd9nweEa3dugTT61Ynd5wFaChf3UnRgitvMGbn
+
+
+============================
+
+Withdraw Stake#
+Transfer tokens out of a stake account with the solana withdraw-stake command:
+
+solana withdraw-stake --withdraw-authority <KEYPAIR> <STAKE_ACCOUNT_ADDRESS> <RECIPIENT_ADDRESS> <AMOUNT> \
+    --fee-payer <KEYPAIR>
+<STAKE_ACCOUNT_ADDRESS> is the existing stake account, the stake authority <KEYPAIR> is the withdraw authority, and <AMOUNT> is the number of tokens to transfer to <RECIPIENT_ADDRESS>.
+
+solana withdraw-stake --withdraw-authority ~/my-solana-wallet/my-keypair.json EcpWGSfVKEFXkpL4uMciCScuKcvd8saxxtH7ffMczhup CB1mZWz3AztAfbzX3ufix6XFeXcrZ2GTFHcjyPTpVV5k 27.107167842 --fee-payer ~/my-solana-wallet/my-keypair.json
+
+dan@dan-desktop:~$ solana withdraw-stake --withdraw-authority ~/my-solana-wallet/my-keypair.json EcpWGSfVKEFXkpL4uMciCScuKcvd8saxxtH7ffMczhup CB1mZWz3AztAfbzX3ufix6XFeXcrZ2GTFHcjyPTpVV5k 27.107167842 --fee-payer ~/my-solana-wallet/my-keypair.json
+
+Signature: 4Ma8uPi7pMwLPXKFbjCiTACfoGWNURHjDGB4B4ikcS8DZWqitm4AAMoRjAbwKghKrPcpsHQEoYRSYA7exm1vqYiH
+==============
+dan@dan-desktop:~$ solana deactivate-stake --stake-authority ~/my-solana-wallet/my-keypair.json AGtdK9z1aD7xjVvXKFVPt8LceLgZW6ZiaSvxkUdfzAk9 --fee-payer ~/my-solana-wallet/my-keypair.json
+
+Signature: 2MtaPfep3dwF4EemvRRAg5XDEFyr1zMSdGqgSDNj4EmpY7DQLQa1pKzMQ9bvpLEqoECHKaoGpQWBb7SUwKSxqq6M
+=============
+dan@dan-desktop:~$ solana transfer --from ~/my-solana-wallet/my-keypair.json 4rhhZdxTnPXhvU24rJ7UHHTorcCqePdypygcpEmaWLkc 27.0 --fee-payer ~/my-solana-wallet/my-keypair.json --allow-unfunded-recipient
+
+================================
+dan@dan-desktop:~$ solana withdraw-stake --withdraw-authority ~/my-solana-wallet/my-keypair.json AGtdK9z1aD7xjVvXKFVPt8LceLgZW6ZiaSvxkUdfzAk9 CB1mZWz3AztAfbzX3ufix6XFeXcrZ2GTFHcjyPTpVV5k 50.720403083 --fee-payer ~/my-solana-wallet/my-keypair.json
+
+Signature: 4d3Dg63Wh8X3n6Qa7vw3zKaDfzCshV9Fd7WLTULwmWJ95yGGB7a7FzzdkUoS5HMLaP7kmWEbzqpZZ44rV9rbmXhW
+==============================
+dan@dan-desktop:~$ solana transfer --from ~/my-solana-wallet/my-keypair.json 4rhhZdxTnPXhvU24rJ7UHHTorcCqePdypygcpEmaWLkc 50.0 --fee-payer ~/my-solana-wallet/my-keypair.json --allow-unfunded-recipient
+
+Signature: GBnE8hfE6JYehzGCtdoiFiB1yVNW3VgA9r99EBe7XQaHdASn4dDMm3v9zxPyschCRtGPuQU84LT8gkjPigs8hGc
+===========================
+
+Soliet wallet
+
+spike mesh tone labor waste boy leisure sugar license exile hello gold supply panel old about age milk aisle cherry destroy unfair dizzy dial
+
+By default, sollet will use m/44'/501'/0'/0' as the derivation path for the main wallet. To use an alternative path, try restoring an existing wallet.
+
+Password - solEbolAng1Om
+
+Public address - H6e28o9zWHPzMs5BLQfCpWSxne8SrVDQd7m631px1LnW
+===
+slpUSDC  - wrapped usdc for solana.
+HdcvBLMwJSJmJDeQLc3YG7PgZv1mAJwrNqUNHqQDCj5
+====================================
+===================================
+Deposited 66 SOL into wallet
+
+dan@dan-desktop:~$ solana balance CB1mZWz3AztAfbzX3ufix6XFeXcrZ2GTFHcjyPTpVV5k --url https://api.mainnet-beta.solana.com
+66.213325795 SOL
+dan@dan-desktop:~$ solana-keygen new --no-passphrase -o ~/my-solana-wallet/stake-account5.json
+Generating a new keypair
+Wrote new keypair to /home/dan/my-solana-wallet/stake-account5.json
+============================================================================
+pubkey: 7AStZGzqTSqS9teBkRujE6udALQNaWy9TD9PUaj1R4Z4
+============================================================================
+Save this seed phrase to recover your new keypair:
+follow diagram term escape clutch speak list snake novel arrest bread tomato
+============================================================================
+dan@dan-desktop:~$ solana create-stake-account --from ~/my-solana-wallet/my-keypair.json ~/my-solana-wallet/stake-account5.json 66.0 --stake-authority ~/my-solana-wallet/my-keypair.json --withdraw-authority ~/my-solana-wallet/my-keypair.json --fee-payer ~/my-solana-wallet/my-keypair.json
+
+Signature: 2hXf389FvMHAvPaunYmBTzHahJCHKW9tkMo68ReecdFoYKC53ahcqoLJ8mxbZgqKHFJLdhxJViQ3XoTN1UWY4yXP
+
+dan@dan-desktop:~$ solana stake-account 7AStZGzqTSqS9teBkRujE6udALQNaWy9TD9PUaj1R4Z4
+Balance: 66 SOL
+Rent Exempt Reserve: 0.00228288 SOL
+Stake account is undelegated
+Stake Authority: CB1mZWz3AztAfbzX3ufix6XFeXcrZ2GTFHcjyPTpVV5k
+Withdraw Authority: CB1mZWz3AztAfbzX3ufix6XFeXcrZ2GTFHcjyPTpVV5k
+
+dan@dan-desktop:~$ dan@dan-desktop:~$ solana delegate-stake --stake-authority ~/my-solana-wallet/my-keypair.json 7AStZGzqTSqS9teBkRujE6udALQNaWy9TD9PUaj1R4Z4 GNZ1PAAS33davY4Q1BMEpZEpVBtRtGvSpcTH5wYVkkVt --fee-payer ~/my-solana-wallet/my-keypair.json
+
+Signature: 4b1CzeRBiuEXJxrKi2AxzheA5GKAj29ggR5QF5KGsh1mRfgH3TEaEWBu8DRiYrVNeXA5NS3oZPV1CtA8WQwfgn6M
+
+dan@dan-desktop:~$ 
+
+======================
+Dec 13 2021
+dan@dan-desktop:~$ solana deactivate-stake --stake-authority ~/my-solana-wallet/my-keypair.json 7AStZGzqTSqS9teBkRujE6udALQNaWy9TD9PUaj1R4Z4 --fee-payer ~/my-solana-wallet/my-keypair.json
+
+Signature: 2igSkBi8vvsRAkS6SK3gZTiHWdJ6NdjZez9jjdhw4fh9JvYSJ1XSPschX1rZPbhkq5B1utunP1Q7dzZkBS1SYBut
+------
+=========================================
+withdrawl on may 11 2022 solana
+
+sold 15 sol on Valr at 64$/sol
+dan@dan-desktop:~$ solana balance CB1mZWz3AztAfbzX3ufix6XFeXcrZ2GTFHcjyPTpVV5k --url https://api.mainnet-beta.solana.com #this is my Solana wallet account
+21.813290794 SOL
+
+tranfered 21 sol to Valr.
+solana transfer --from ~/my-solana-wallet/my-keypair.json ERG22dhWpbsEpqciaZEiYoD9LDwrvGatFDhHP1sRiZ6A 21 --fee-payer ~/my-solana-wallet/my-keypair.json --allow-unfunded-recipient
+
+Signature: 4URYWjVhiqy5kX4kFE9tcdtNA6pfaCtMw2ZaNgkcLUnFZrtSC4HwPmVNVc4ZtT2kuXSn6xRYBJKcfyB7xPe8waiT
+
+now to deactivate a staking account.
+solana balance 4SPiMAm4WjvetWzHA3GYxEcAVBp6ysJz2mUnq8kZVBgJ --url https://api.mainnet-beta.solana.com 
+126.901148974 SOL
+
+dan@dan-desktop:~$ solana deactivate-stake --stake-authority ~/my-solana-wallet/my-keypair.json 4SPiMAm4WjvetWzHA3GYxEcAVBp6ysJz2mUnq8kZVBgJ --fee-payer ~/my-solana-wallet/my-keypair.json
+
+Signature: 54skjutEsSVLwSs9VLrrzJBjENYy9aWrV11vwPAjz3qBJwnk5o4RVebUcXG8SsLA8wdGpX5rr7t7FPYL9AiXyeB9
+
